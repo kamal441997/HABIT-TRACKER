@@ -7,7 +7,7 @@
 
 const CONFIG = {
   // Google Apps Script Web App URL — UPDATE THIS after deploying!
-  API_URL: 'https://script.google.com/macros/s/AKfycby6vZ66BzuWnB9fysWlidZICTyKem3Bu-ob-Mhj_p4XbejN1e8AXARlSYElV7UP5B8t-Q/exec',
+  API_URL: 'https://script.google.com/macros/s/AKfycbw7wVWmVTN2NQEg_nRyruyvMz0e3tw3yn8E9k3scaLEgSYOcardEv_dtFpH0jhg6YExTA/exec',
 
   // App settings
   APP_NAME: 'Habit Tracker',
