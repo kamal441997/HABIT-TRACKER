@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Premium daily habit tracker with streak rewards, gamification, and Google Sheets sync. Track your habits, earn badges, unlock rewards!" />
+  <meta name="theme-color" content="#0a0a1a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>🧭 Habit Tracker — Daily Progress & Rewards</title>
+
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧭</text></svg>" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/animations.css" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <!-- Animated Background -->
+  <div class="bg-gradient"></div>
+  <canvas id="particleCanvas"></canvas>
+
+  <!-- Navigation Bar -->
+  <nav class="nav-bar">
+    <div class="nav-content">
+      <div class="nav-logo">
+        <span class="nav-logo-icon">🧭</span>
+        <span>Habit Tracker</span>
+      </div>
+      <div class="nav-tabs">
+        <button class="nav-tab active" data-screen="checkinScreen" id="tabCheckin">
+          <span class="nav-tab-icon">📝</span>
+          <span class="tab-text">Check-in</span>
+        </button>
+        <button class="nav-tab" data-screen="dashboardScreen" id="tabDashboard">
+          <span class="nav-tab-icon">📊</span>
+          <span class="tab-text">Dashboard</span>
+        </button>
+        <button class="nav-tab" data-screen="rewardsScreen" id="tabRewards">
+          <span class="nav-tab-icon">🏆</span>
+          <span class="tab-text">Rewards</span>
+        </button>
+        <button class="nav-tab" data-screen="historyScreen" id="tabHistory">
+          <span class="nav-tab-icon">📅</span>
+          <span class="tab-text">History</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main App Container -->
+  <main class="app-container">
+
+    <!-- Config Warning (hidden by default) -->
+    <div class="config-warning" id="configWarning" style="display:none;">
+      <span>⚠️</span>
+      <span>Google Sheets API not configured. Data is saved locally only. See README to connect your backend.</span>
+    </div>
+
+    <!-- Streak Banner -->
+    <div class="streak-banner anim-fade-in-down" id="streakBanner">
+      <div class="streak-info">
+        <span class="streak-fire">⏳</span>
+        <div class="streak-text">
+          <span class="streak-count">Loading...</span>
+          <span class="streak-label">Fetching your data</span>
+        </div>
+      </div>
+      <div class="xp-section">
+        <div class="xp-info">
+          <span class="xp-level">...</span>
+          <span>0 XP</span>
+        </div>
+        <div class="xp-bar-track">
+          <div class="xp-bar-fill" style="width: 0%"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ Screen: Check-in ═══ -->
+    <section class="screen active" id="checkinScreen">
+      <div class="checkin-container" id="checkinContent">
+        <!-- Rendered dynamically by UI.renderCheckin() -->
+        <div class="glass-card" style="text-align:center;padding:48px;">
+          <div class="skeleton-line skeleton-line-short" style="margin:0 auto 16px;"></div>
+          <div class="skeleton-line" style="margin-bottom:16px;"></div>
+          <div class="skeleton-line skeleton-line-medium" style="margin:0 auto;"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ Screen: Dashboard ═══ -->
+    <section class="screen" id="dashboardScreen">
+      <div id="dashboardContent">
+        <!-- Rendered dynamically by UI.renderDashboard() -->
+      </div>
+    </section>
+
+    <!-- ═══ Screen: Rewards ═══ -->
+    <section class="screen" id="rewardsScreen">
+      <div id="rewardsContent">
+        <!-- Rendered dynamically by UI.renderRewards() -->
+      </div>
+    </section>
+
+    <!-- ═══ Screen: History ═══ -->
+    <section class="screen" id="historyScreen">
+      <div id="historyContent">
+        <!-- Rendered dynamically by UI.renderHistory() -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- JavaScript (load in dependency order) -->
+  <script src="js/config.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/rewards.js"></script>
+  <script src="js/animations.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
