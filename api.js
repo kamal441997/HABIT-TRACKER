@@ -76,10 +76,25 @@ const API = (() => {
 
   async function getHistory(days = 30) {
     try {
-      const data = await get('getHistory', { days: days.toString() });
-      if (data && data.history) {
-        Storage.cacheHistory(data.history);
-        return data.history;
+      const response = await get('getHistory', { days: days.toString() });
+      if (response && response.data) {
+        // Map backend keys to frontend keys
+        const history = response.data.map(row => ({
+          date: row.date,
+          day: row.day,
+          wake_up: row.wakeUp,
+          sleep_time: row.sleepTime,
+          sleep_hours: row.hoursSlept,
+          water: row.water,
+          reading: row.reading,
+          walking: row.walking,
+          todo_status: row.todoStatus,
+          todo_notes: row.todoNotes,
+          tomorrow_todo: row.tomorrowTodo,
+          score: row.dailyScore
+        }));
+        Storage.cacheHistory(history);
+        return history;
       }
     } catch (e) {
       console.log('API: Falling back to cached history');
@@ -89,8 +104,25 @@ const API = (() => {
 
   async function getToday() {
     try {
-      const data = await get('getToday');
-      return data ? data.entry : null;
+      const response = await get('getToday');
+      if (response && response.data) {
+        const row = response.data;
+        return {
+          date: row.date,
+          day: row.day,
+          wake_up: row.wakeUp,
+          sleep_time: row.sleepTime,
+          sleep_hours: row.hoursSlept,
+          water: row.water,
+          reading: row.reading,
+          walking: row.walking,
+          todo_status: row.todoStatus,
+          todo_notes: row.todoNotes,
+          tomorrow_todo: row.tomorrowTodo,
+          score: row.dailyScore
+        };
+      }
+      return null;
     } catch (e) {
       return Storage.getTodayEntry();
     }
@@ -98,10 +130,10 @@ const API = (() => {
 
   async function getYesterdayTodo() {
     try {
-      const data = await get('getYesterdayTodo');
-      if (data && data.todo) {
-        Storage.saveYesterdayTodo(data.todo);
-        return data.todo;
+      const response = await get('getYesterdayTodo');
+      if (response && response.todo !== undefined) {
+        Storage.saveYesterdayTodo(response.todo);
+        return response.todo;
       }
     } catch (e) {
       console.log('API: Falling back to cached todo');
@@ -111,10 +143,10 @@ const API = (() => {
 
   async function getStreaks() {
     try {
-      const data = await get('getStreaks');
-      if (data) {
-        Storage.saveStreakData(data);
-        return data;
+      const response = await get('getStreaks');
+      if (response && response.data) {
+        Storage.saveStreakData(response.data);
+        return response.data;
       }
     } catch (e) {
       console.log('API: Falling back to cached streaks');
@@ -124,10 +156,10 @@ const API = (() => {
 
   async function getRewardsLog() {
     try {
-      const data = await get('getRewards');
-      if (data && data.rewards) {
-        Storage.saveRewards(data.rewards);
-        return data.rewards;
+      const response = await get('getRewards');
+      if (response && response.data) {
+        Storage.saveRewards(response.data);
+        return response.data;
       }
     } catch (e) {
       console.log('API: Falling back to cached rewards');
@@ -142,9 +174,22 @@ const API = (() => {
     // Add XP based on score
     const newXP = Storage.addXP(entry.score || 0);
 
+    // Map to backend keys
+    const backendPayload = {
+      wakeUp: entry.wake_up || '',
+      sleepTime: entry.sleep_time || '',
+      hoursSlept: entry.sleep_hours || 0,
+      water: entry.water || 0,
+      reading: entry.reading || 0,
+      walking: entry.walking || 0,
+      todoStatus: entry.todo_status || 'N/A',
+      todoNotes: entry.todo_notes || '',
+      tomorrowTodo: entry.tomorrow_todo || ''
+    };
+
     try {
-      const result = await post('submitDaily', { entry });
-      if (result) {
+      const result = await post('submitDaily', backendPayload);
+      if (result && result.success) {
         // Sync succeeded — clear any pending queue
         Storage.clearPendingSubmissions();
         return { ...result, xp: newXP, synced: true };
