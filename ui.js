@@ -64,7 +64,7 @@ const UI = (() => {
     let html = '';
 
     // Yesterday's todo follow-up
-    if (yesterdayTodo) {
+    if (yesterdayTodo && yesterdayTodo !== 'None set') {
       html += `
         <div class="glass-card todo-followup anim-fade-in-up" id="todoFollowup">
           <h3 class="section-header"><span class="section-header-icon">📋</span> Yesterday's To-Do</h3>
