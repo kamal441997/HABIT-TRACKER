@@ -64,7 +64,7 @@ const UI = (() => {
     let html = '';
 
     // Yesterday's todo follow-up
-    if (yesterdayTodo) {
+    if (yesterdayTodo && yesterdayTodo !== 'None set') {
       html += `
         <div class="glass-card todo-followup anim-fade-in-up" id="todoFollowup">
           <h3 class="section-header"><span class="section-header-icon">📋</span> Yesterday's To-Do</h3>
@@ -143,7 +143,34 @@ const UI = (() => {
     // Render the question
     if (index < HABITS.length) {
       const habit = HABITS[index];
-      const savedValue = formValues[habit.id] || '';
+      let savedValue = formValues[habit.id] || '';
+
+      // Auto-calculate sleep hours if wake_up and sleep_time are provided
+      if (habit.id === 'sleep_hours') {
+        const sleepStr = formValues['sleep_time'];
+        const wakeStr = formValues['wake_up'];
+        if (sleepStr && wakeStr) {
+          const parseTime = (timeStr) => {
+            const match = timeStr.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+            if (!match) return null;
+            let h = parseInt(match[1]);
+            const m = parseInt(match[2]);
+            const p = match[3].toUpperCase();
+            if (p === 'PM' && h < 12) h += 12;
+            if (p === 'AM' && h === 12) h = 0;
+            return h + (m / 60);
+          };
+          const sleepH = parseTime(sleepStr);
+          const wakeH = parseTime(wakeStr);
+          if (sleepH !== null && wakeH !== null) {
+            let diff = wakeH - sleepH;
+            if (diff < 0) diff += 24; // Crossed midnight
+            const calcHours = Math.round(diff * 10) / 10;
+            savedValue = calcHours;
+            formValues[habit.id] = calcHours; // Save to state
+          }
+        }
+      }
 
       container.innerHTML = `
         <div class="glass-card question-card">

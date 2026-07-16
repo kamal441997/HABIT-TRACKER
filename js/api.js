@@ -78,8 +78,8 @@ const API = (() => {
     try {
       const response = await get('getHistory', { days: days.toString() });
       if (response && response.data) {
-        // Map backend keys to frontend keys
-        const history = response.data.map(row => ({
+        // Map backend keys to frontend keys, and reverse to chronological order (oldest -> newest)
+        const history = response.data.reverse().map(row => ({
           date: row.date,
           day: row.day,
           wake_up: row.wakeUp,
