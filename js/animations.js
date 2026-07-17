@@ -95,6 +95,63 @@ const Animations = (() => {
     particles = [];
   }
 
+  // ─── CURSOR TRAIL ───
+
+  function initCursorTrail() {
+    const trailCanvas = document.createElement('canvas');
+    trailCanvas.id = 'cursorTrail';
+    trailCanvas.style.position = 'fixed';
+    trailCanvas.style.top = '0';
+    trailCanvas.style.left = '0';
+    trailCanvas.style.width = '100%';
+    trailCanvas.style.height = '100%';
+    trailCanvas.style.pointerEvents = 'none';
+    trailCanvas.style.zIndex = '9999';
+    document.body.appendChild(trailCanvas);
+
+    const ctx = trailCanvas.getContext('2d');
+    let points = [];
+
+    function resize() {
+      trailCanvas.width = window.innerWidth;
+      trailCanvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    window.addEventListener('mousemove', (e) => {
+      points.push({ x: e.clientX, y: e.clientY, age: 0 });
+    });
+
+    function drawTrail() {
+      ctx.clearRect(0, 0, trailCanvas.width, trailCanvas.height);
+      
+      for (let i = 0; i < points.length; i++) {
+        const p = points[i];
+        p.age += 1;
+        
+        if (p.age > 20) {
+          points.splice(i, 1);
+          i--;
+          continue;
+        }
+
+        const size = (20 - p.age) * 0.5;
+        const opacity = 1 - (p.age / 20);
+        
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 0, 127, ${opacity})`;
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = '#00f0ff';
+        ctx.fill();
+      }
+      
+      requestAnimationFrame(drawTrail);
+    }
+    drawTrail();
+  }
+
   // ─── CONFETTI EXPLOSION ───
 
   function confetti(options = {}) {
@@ -433,6 +490,7 @@ const Animations = (() => {
   return {
     initParticles,
     destroyParticles,
+    initCursorTrail,
     confetti,
     animateCounter,
     animateProgressRing,
